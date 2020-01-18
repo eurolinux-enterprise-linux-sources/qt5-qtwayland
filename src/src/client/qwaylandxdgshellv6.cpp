@@ -125,6 +125,8 @@ QWaylandXdgSurfaceV6::QWaylandXdgSurfaceV6(QWaylandXdgShellV6 *shell, ::zxdg_sur
 
 QWaylandXdgSurfaceV6::~QWaylandXdgSurfaceV6()
 {
+    if (m_toplevel)
+        zxdg_toplevel_v6_destroy(m_toplevel->object());
     if (m_popup)
         zxdg_popup_v6_destroy(m_popup->object());
     destroy();
@@ -163,8 +165,9 @@ void QWaylandXdgSurfaceV6::setAppId(const QString &appId)
 
 void QWaylandXdgSurfaceV6::setType(Qt::WindowType type, QWaylandWindow *transientParent)
 {
-    if ((type == Qt::Popup || type == Qt::ToolTip) && transientParent) {
-        setPopup(transientParent, m_window->display()->lastInputDevice(), m_window->display()->lastInputSerial(), type == Qt::Popup);
+    QWaylandDisplay *display = m_window->display();
+    if ((type == Qt::Popup || type == Qt::ToolTip) && transientParent && display->lastInputDevice()) {
+        setPopup(transientParent, display->lastInputDevice(), display->lastInputSerial(), type == Qt::Popup);
     } else {
         setToplevel();
         if (transientParent) {

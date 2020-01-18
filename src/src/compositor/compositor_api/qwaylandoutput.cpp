@@ -336,7 +336,7 @@ void QWaylandOutput::update()
 }
 
 /*!
- * \qmlproperty object QtWaylandCompositor::WaylandOutput::compositor
+ * \qmlproperty WaylandCompositor QtWaylandCompositor::WaylandOutput::compositor
  *
  * This property holds the compositor displaying content on this WaylandOutput.
  *
@@ -529,6 +529,8 @@ void QWaylandOutput::setCurrentMode(const QWaylandOutputMode &mode)
 
     Q_EMIT currentModeChanged();
     Q_EMIT geometryChanged();
+    if (!d->availableGeometry.isValid())
+        emit availableGeometryChanged();
 
     d->sendModesInfo();
 }
@@ -836,7 +838,7 @@ void QWaylandOutput::setSizeFollowsWindow(bool follow)
 }
 
 /*!
- * \qmlproperty object QtWaylandCompositor::WaylandOutput::window
+ * \qmlproperty Window QtWaylandCompositor::WaylandOutput::window
  *
  * This property holds the Window for this WaylandOutput.
  *
@@ -938,6 +940,9 @@ void QWaylandOutput::handleSetWidth(int newWidth)
             QWaylandOutputMode mode = d->modes.at(d->currentMode);
             mode.setWidth(newWidth * d->window->devicePixelRatio());
             d->modes.replace(d->currentMode, mode);
+            emit geometryChanged();
+            if (!d->availableGeometry.isValid())
+                emit availableGeometryChanged();
             d->sendModesInfo();
         } else {
             // We didn't add a mode during the initialization because the window
@@ -968,6 +973,9 @@ void QWaylandOutput::handleSetHeight(int newHeight)
             QWaylandOutputMode mode = d->modes.at(d->currentMode);
             mode.setHeight(newHeight * d->window->devicePixelRatio());
             d->modes.replace(d->currentMode, mode);
+            emit geometryChanged();
+            if (!d->availableGeometry.isValid())
+                emit availableGeometryChanged();
             d->sendModesInfo();
         } else {
             // We didn't add a mode during the initialization because the window
@@ -990,6 +998,7 @@ void QWaylandOutput::handleWindowDestroyed()
 {
     Q_D(QWaylandOutput);
     d->window = Q_NULLPTR;
+    emit windowChanged();
     emit windowDestroyed();
 }
 

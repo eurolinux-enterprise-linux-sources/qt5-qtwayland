@@ -608,7 +608,7 @@ QByteArray QWaylandXdgShellV5::interfaceName()
 }
 
 /*!
- * \qmlmethod void QtWaylandCompositor::XdgSurface::ping()
+ * \qmlmethod void QtWaylandCompositor::XdgShellV5::ping()
  *
  * Sends a ping event to the \a client. If the client replies to the event, the
  * pong signal will be emitted.
@@ -645,6 +645,98 @@ void QWaylandXdgShellV5::closeAllPopups()
         }
     }
 }
+
+/*!
+ * \qmlsignal void QtWaylandCompositor::XdgShellV5::xdgSurfaceRequested(WaylandSurface surface, WaylandResource resource)
+ *
+ * This signal is emitted when the client has requested an \c xdg_surface to be associated
+ * with \a surface. The handler for this signal may create the shell surface for \a resource
+ * and initialize it within the scope of the signal emission. Otherwise an XdgSurfaceV5 will
+ * be created automatically.
+ */
+
+/*!
+ * \fn void QWaylandXdgShellV5::xdgSurfaceRequested(QWaylandSurface *surface, const QWaylandResource &resource)
+ *
+ * This signal is emitted when the client has requested an \c xdg_surface to be associated
+ * with \a surface. The handler for this signal may create the shell surface for \a resource
+ * and initialize it within the scope of the signal emission. Otherwise a QWaylandXdgSurfaceV5
+ * will be created automatically.
+ */
+
+/*!
+ * \qmlsignal void QtWaylandCompositor::XdgShellV5::xdgSurfaceCreated(XdgSurfaceV5 xdgSurface)
+ *
+ * This signal is emitted when the client has created an \c xdg_surface.
+ * A common use case is to let the handler of this signal instantiate a ShellSurfaceItem or
+ * WaylandQuickItem for displaying \a xdgSurface in a QtQuick scene.
+ */
+
+/*!
+ * \fn void QWaylandXdgShellV5::xdgSurfaceCreated(QWaylandXdgSurfaceV5 *xdgSurface)
+ *
+ * This signal is emitted when the client has created an \c xdg_surface.
+ * A common use case is to let the handler of this signal instantiate a QWaylandShellSurfaceItem or
+ * QWaylandQuickItem for displaying \a xdgSurface in a QtQuick scene.
+ */
+
+/*!
+ * \qmlsignal void QtWaylandCompositor::XdgShellV5::xdgPopupRequested(WaylandSurface surface, WaylandSurface parent, WaylandSeat seat, point position, WaylandResource resource)
+ *
+ * This signal is emitted when the client has requested an \c xdg_popup to be associated
+ * with \a surface. The handler for this signal may create the xdg popup for \a resource and
+ * initialize it within the scope of the signal emission. Otherwise an XdgPopupV5 will be
+ * created automatically.
+ *
+ * The \a seat is the \c wl_seat that caused the popup to be opened.
+ *
+ * \a position is the desired position of the popup, relative to the \a parent.
+ */
+
+/*!
+ * \fn void QWaylandXdgShellV5::xdgPopupRequested(QWaylandSurface *surface, QWaylandSurface *parent, QWaylandSeat *seat, const QPoint &position, const QWaylandResource &resource)
+ *
+ * This signal is emitted when the client has requested an \c xdg_surface to be associated
+ * with \a surface. The handler for this signal may create the xdg poup for \a resource and
+ * initialize it within the scope of the signal emission. Otherwise a QWaylandXdgPopupV5 will be
+ * created automatically.
+ *
+ * The \a seat is the \c wl_seat that caused the popup to be opened.
+ *
+ * \a position is the desired position of the popup, relative to the \a parent.
+ */
+
+/*!
+ * \qmlsignal void QtWaylandCompositor::XdgShellV5::xdgPopupCreated(XdgPopupV5 xdgPopup)
+ *
+ * This signal is emitted when the client has created an \c xdg_popup.
+ * A common use case is to let the handler of this signal instantiate a ShellSurfaceItem or
+ * WaylandQuickItem for displaying \a xdgPopup in a QtQuick scene.
+ */
+
+/*!
+ * \fn void QWaylandXdgShellV5::xdgPopupCreated(QWaylandXdgPopupV5 *xdgPopup)
+ *
+ * This signal is emitted when the client has created an \c xdg_popup.
+ * A common use case is to let the handler of this signal instantiate a QWaylandShellSurfaceItem or
+ * QWaylandQuickItem for displaying \a xdgPopup in a QtQuick scene.
+ */
+
+/*!
+ * \qmlsignal void QtWaylandCompositor::XdgShellV5::pong(int serial)
+ *
+ * This signal is emitted when the client has responded to a ping event with serial \a serial.
+ *
+ * \sa QtWaylandCompositor::XdgShellV5::ping()
+ */
+
+/*!
+ * \fn void QWaylandXdgShellV5::pong(uint serial)
+ *
+ * This signal is emitted when the client has responded to a ping event with serial \a serial.
+ *
+ * \sa QWaylandXdgShellV5::ping()
+ */
 
 void QWaylandXdgShellV5::handleSeatChanged(QWaylandSeat *newSeat, QWaylandSeat *oldSeat)
 {
@@ -701,14 +793,14 @@ void QWaylandXdgShellV5::handleFocusChanged(QWaylandSurface *newSurface, QWaylan
  */
 
 /*!
- * \qmlsignal QtWaylandCompositor::XdgSurface::setTopLevel()
+ * \qmlsignal QtWaylandCompositor::XdgSurfaceV5::setTopLevel()
  *
  * This signal is emitted when the parent surface is unset, effectively
  * making the window top level.
  */
 
 /*!
- * \qmlsignal QtWaylandCompositor::XdgSurface::setTransient()
+ * \qmlsignal QtWaylandCompositor::XdgSurfaceV5::setTransient()
  *
  * This signal is emitted when the parent surface is set, effectively
  * making the window transient.
@@ -733,10 +825,10 @@ QWaylandXdgSurfaceV5::QWaylandXdgSurfaceV5(QWaylandXdgShellV5 *xdgShell, QWaylan
 }
 
 /*!
- * \qmlmethod void QtWaylandCompositor::XdgSurface::initialize(object surface, object client, int id)
+ * \qmlmethod void QtWaylandCompositor::XdgSurfaceV5::initialize(XdgShellV5 xdgShell, WaylandSurface surface, WaylandResource resource)
  *
- * Initializes the XdgSurface, associating it with the given \a surface,
- * \a client, and \a id.
+ * Initializes the XdgSurfaceV5, associating it with the given \a xdgShell, \a surface,
+ * and \a resource.
  */
 
 /*!
@@ -758,6 +850,134 @@ void QWaylandXdgSurfaceV5::initialize(QWaylandXdgShellV5 *xdgShell, QWaylandSurf
     emit windowGeometryChanged();
     QWaylandCompositorExtension::initialize();
 }
+
+/*!
+ * \qmlsignal void QtWaylandCompositor::XdgSurfaceV5::showWindowMenu(WaylandSeat seat, point localSurfacePosition)
+ *
+ * This signal is emitted when the client wants to show a context menu at \a localSurfacePosition,
+ * using the Wayland seat \a seat. It's typically emitted in response to the user right-clicking
+ * the window decorations.
+ */
+
+/*!
+ * \fn void QWaylandXdgSurfaceV5::showWindowMenu(QWaylandSeat *seat, const QPoint &localSurfacePosition)
+ *
+ * This signal is emitted when the client wants to show a context menu at \a localSurfacePosition,
+ * using the Wayland seat \a seat. It's typically emitted in response to the user right-clicking
+ * the window decorations.
+ */
+
+/*!
+ * \qmlsignal void QtWaylandCompositor::XdgSurfaceV5::startMove(WaylandSeat seat)
+ *
+ * This signal is emitted when the client wants to start an interactive move of the XdgSurfaceV5,
+ * typically in response to the window decorations being dragged by \a seat.
+ */
+
+/*!
+ * \fn void QWaylandXdgSurfaceV5::startMove(QWaylandSeat *seat)
+ *
+ * This signal is emitted when the client wants to start an interactive move of the
+ * QWaylandXdgSurfaceV5, typically in response to the window decorations being dragged by \a seat.
+ */
+
+/*!
+ * \qmlsignal void QtWaylandCompositor::XdgSurfaceV5::startResize(WaylandSeat seat, enumeration edges)
+ *
+ * This signal is emitted when the client wants to start an interactive resize of the XdgSurfaceV5,
+ * typically in response to the window decorations being dragged by \a seat on the window borders
+ * given by \a edges.
+ *
+ * \sa QWaylandXdgSurfaceV5::ResizeEdge
+ */
+
+/*!
+ * \fn void QWaylandXdgSurfaceV5::startResize(QWaylandSeat *seat, ResizeEdge edges)
+ *
+ * This signal is emitted when the client wants to start an interactive resize of the
+ * QWaylandXdgSurfaceV5, typically in response to the window decorations being dragged by
+ * \a seat on the window borders given by \a edges.
+ */
+
+/*!
+ * \qmlsignal void QtWaylandCompositor::XdgSurfaceV5::setMaximized()
+ *
+ * This signal is emitted when the client wants the \c xdg_surface to be maximized.
+ */
+
+/*!
+ * \fn void QWaylandXdgSurfaceV5::setMaximized()
+ *
+ * This signal is emitted when the client wants the \c xdg_surface to be maximized.
+ */
+
+/*!
+ * \qmlsignal void QtWaylandCompositor::XdgSurfaceV5::unsetMaximized()
+ *
+ * This signal is emitted when the client doesn't want the \c xdg_surface to be maximized anymore.
+ */
+
+/*!
+ * \fn void QWaylandXdgSurfaceV5::unsetMaximized()
+ *
+ * This signal is emitted when the client doesn't want the \c xdg_surface to be maximized anymore.
+ */
+
+/*!
+ * \qmlsignal void QtWaylandCompositor::XdgSurfaceV5::setFullscreen(WaylandOutput output)
+ *
+ * This signal is emitted when the client wants the \c xdg_surface to be in full screen mode.
+ * The client may specify an \a output it wishes the \c xdg_surface to be shown on.
+ */
+
+/*!
+ * \fn void QWaylandXdgSurfaceV5::setFullscreen(QWaylandOutput *output)
+ *
+ * This signal is emitted when the client wants the \c xdg_surface to be in full screen mode.
+ * The client may specify an \a output it wishes the \c xdg_surface to be shown on.
+ */
+
+/*!
+ * \qmlsignal void QtWaylandCompositor::XdgSurfaceV5::unsetFullscreen()
+ *
+ * This signal is emitted when the client doesn't want the \c xdg_surface to be in full screen mode
+ * anymore.
+ */
+
+/*!
+ * \fn void QWaylandXdgSurfaceV5::unsetFullscreen()
+ *
+ * This signal is emitted when the client doesn't want the \c xdg_surface to be in full screen mode
+ * anymore.
+ */
+
+/*!
+ * \qmlsignal void QtWaylandCompositor::XdgSurfaceV5::setMinimized()
+ *
+ * This signal is emitted when the client wants the \c xdg_surface to be minimized.
+ */
+
+/*!
+ * \fn void QWaylandXdgSurfaceV5::setMinimized()
+ *
+ * This signal is emitted when the client wants the \c xdg_surface to be minimized.
+ */
+
+/*!
+ * \qmlsignal void QtWaylandCompositor::XdgSurfaceV5::ackConfigure(int serial)
+ *
+ * This signal is emitted when the client has received configure events up to and including the
+ * configure event with serial \a serial and will draw its surface accordingly in the next committed
+ * buffer.
+ */
+
+/*!
+ * \fn void QWaylandXdgSurfaceV5::ackConfigure(uint serial)
+ *
+ * This signal is emitted when the client has received configure events up to and including the
+ * configure event with serial \a serial and will draw its surface accordingly in the next committed
+ * buffer.
+ */
 
 /*!
  * \internal
@@ -789,9 +1009,9 @@ void QWaylandXdgSurfaceV5::handleBufferScaleChanged()
 }
 
 /*!
- * \qmlproperty object QtWaylandCompositor::XdgSurface::shell
+ * \qmlproperty XdgShellV5 QtWaylandCompositor::XdgSurfaceV5::shell
  *
- * This property holds the shell associated with this XdgSurface.
+ * This property holds the shell associated with this XdgSurfaceV5.
  */
 
 /*!
@@ -806,9 +1026,9 @@ QWaylandXdgShellV5 *QWaylandXdgSurfaceV5::shell() const
 }
 
 /*!
- * \qmlproperty object QtWaylandCompositor::XdgSurface::surface
+ * \qmlproperty WaylandSurface QtWaylandCompositor::XdgSurfaceV5::surface
  *
- * This property holds the surface associated with this XdgSurface.
+ * This property holds the surface associated with this XdgSurfaceV5.
  */
 
 /*!
@@ -823,16 +1043,11 @@ QWaylandSurface *QWaylandXdgSurfaceV5::surface() const
 }
 
 /*!
- * \qmlproperty enum QtWaylandCompositor::XdgSurfaceV5::windowType
+ * \qmlproperty enumeration QtWaylandCompositor::XdgSurfaceV5::windowType
  *
  * This property holds the window type of the XdgSurfaceV5.
  */
 
-/*!
- * \property QWaylandXdgSurfaceV5::windowType
- *
- * This property holds the window type of the QWaylandXdgSurfaceV5.
- */
 Qt::WindowType QWaylandXdgSurfaceV5::windowType() const
 {
     Q_D(const QWaylandXdgSurfaceV5);
@@ -840,20 +1055,20 @@ Qt::WindowType QWaylandXdgSurfaceV5::windowType() const
 }
 
 /*!
- * \qmlproperty object QtWaylandCompositor::XdgSurface::parentSurface
+ * \qmlproperty XdgSurfaceV5 QtWaylandCompositor::XdgSurfaceV5::parentSurface
  *
- * This property holds the XdgSurface parent of this XdgSurface.
+ * This property holds the XdgSurfaceV5 parent of this XdgSurfaceV5.
  * When a parent surface is set, the parentSurfaceChanged() signal
  * is guaranteed to be emitted before setTopLevel() and setTransient().
  *
- * \sa QtWaylandCompositor::XdgSurface::setTopLevel()
- * \sa QtWaylandCompositor::XdgSurface::setTransient()
+ * \sa QtWaylandCompositor::XdgSurfaceV5::setTopLevel()
+ * \sa QtWaylandCompositor::XdgSurfaceV5::setTransient()
  */
 
 /*!
  * \property QWaylandXdgSurfaceV5::parentSurface
  *
- * This property holds the XdgSurface parent of this XdgSurface.
+ * This property holds the XdgSurfaceV5 parent of this XdgSurfaceV5.
  * When a parent surface is set, the parentSurfaceChanged() signal
  * is guaranteed to be emitted before setTopLevel() and setTransient().
  *
@@ -867,9 +1082,9 @@ QWaylandXdgSurfaceV5 *QWaylandXdgSurfaceV5::parentSurface() const
 }
 
 /*!
- * \qmlproperty string QtWaylandCompositor::XdgSurface::title
+ * \qmlproperty string QtWaylandCompositor::XdgSurfaceV5::title
  *
- * This property holds the title of the XdgSurface.
+ * This property holds the title of the XdgSurfaceV5.
  */
 
 /*!
@@ -995,10 +1210,10 @@ QSize QWaylandXdgSurfaceV5::sizeForResize(const QSizeF &size, const QPointF &del
 }
 
 /*!
- * \qmlmethod int QtWaylandCompositor::XdgSurface::sendConfigure(size size, list<uint> states)
+ * \qmlmethod int QtWaylandCompositor::XdgSurfaceV5::sendConfigure(size size, list<uint> states)
  *
  * Sends a configure event to the client. \a size contains the pixel size of the surface.
- * Known \a states are enumerated in XdgSurface::State.
+ * Known \a states are enumerated in XdgSurfaceV5::State.
  */
 
 /*!
@@ -1029,7 +1244,7 @@ uint QWaylandXdgSurfaceV5::sendConfigure(const QSize &size, const QVector<QWayla
 }
 
 /*!
- * \qmlmethod void QtWaylandCompositor::XdgSurface::sendClose()
+ * \qmlmethod void QtWaylandCompositor::XdgSurfaceV5::sendClose()
  *
  * Sends a close event to the client.
  */
@@ -1147,10 +1362,10 @@ QWaylandXdgPopupV5::QWaylandXdgPopupV5(QWaylandXdgShellV5 *xdgShell, QWaylandSur
 }
 
 /*!
- * \qmlmethod void QtWaylandCompositor::XdgPopup::initialize(object surface, object parentSurface, object resource)
+ * \qmlmethod void QtWaylandCompositor::XdgPopupV5::initialize(XdgShellV5 shell, WaylandSurface surface, WaylandSurface parentSurface, point position, WaylandResource resource)
  *
  * Initializes the xdg popup, associating it with the given \a shell, \a surface,
- * \a parentSurface and \a resource.
+ * \a parentSurface, \a position and \a resource.
  */
 
 /*!
@@ -1175,9 +1390,9 @@ void QWaylandXdgPopupV5::initialize(QWaylandXdgShellV5 *shell, QWaylandSurface *
 }
 
 /*!
- * \qmlproperty object QtWaylandCompositor::XdgPopup::shell
+ * \qmlproperty XdgShellV5 QtWaylandCompositor::XdgPopupV5::shell
  *
- * This property holds the shell associated with this XdgPopup.
+ * This property holds the shell associated with this XdgPopupV5.
  */
 
 /*!
@@ -1192,9 +1407,9 @@ QWaylandXdgShellV5 *QWaylandXdgPopupV5::shell() const
 }
 
 /*!
- * \qmlproperty object QtWaylandCompositor::XdgPopup::surface
+ * \qmlproperty WaylandSurface QtWaylandCompositor::XdgPopupV5::surface
  *
- * This property holds the surface associated with this XdgPopup.
+ * This property holds the surface associated with this XdgPopupV5.
  */
 
 /*!
@@ -1209,9 +1424,9 @@ QWaylandSurface *QWaylandXdgPopupV5::surface() const
 }
 
 /*!
- * \qmlproperty object QtWaylandCompositor::XdgPopup::parentSurface
+ * \qmlproperty WaylandSurface QtWaylandCompositor::XdgPopupV5::parentSurface
  *
- * This property holds the surface associated with the parent of this XdgPopup.
+ * This property holds the surface associated with the parent of this XdgPopupV5.
  */
 
 /*!
@@ -1228,7 +1443,7 @@ QWaylandSurface *QWaylandXdgPopupV5::parentSurface() const
 
 
 /*!
- * \qmlproperty object QtWaylandCompositor::XdgPopup::position
+ * \qmlproperty point QtWaylandCompositor::XdgPopupV5::position
  *
  * This property holds the location of the upper left corner of the surface
  * relative to the upper left corner of the parent surface, in surface local

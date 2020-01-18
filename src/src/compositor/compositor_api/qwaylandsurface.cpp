@@ -410,7 +410,7 @@ QWaylandSurface::~QWaylandSurface()
 }
 
 /*!
- * \qmlmethod void QtWaylandCompositor::WaylandSurface::initialize(object compositor, object client, int id, int version)
+ * \qmlmethod void QtWaylandCompositor::WaylandSurface::initialize(WaylandCompositor compositor, WaylandClient client, int id, int version)
  *
  * Initializes the WaylandSurface with the given \a compositor and \a client, and with the given \a id
  * and \a version.
@@ -445,7 +445,7 @@ bool QWaylandSurface::isInitialized() const
 }
 
 /*!
- * \qmlproperty object QtWaylandCompositor::WaylandSurface::client
+ * \qmlproperty WaylandClient QtWaylandCompositor::WaylandSurface::client
  *
  * This property holds the client using this WaylandSurface.
  */
@@ -666,7 +666,11 @@ bool QWaylandSurface::isDestroyed() const
 void QWaylandSurface::markAsCursorSurface(bool cursorSurface)
 {
     Q_D(QWaylandSurface);
+    if (d->isCursorSurface == cursorSurface)
+        return;
+
     d->isCursorSurface = cursorSurface;
+    emit cursorSurfaceChanged();
 }
 
 bool QWaylandSurface::isCursorSurface() const
@@ -884,7 +888,7 @@ void QWaylandSurfacePrivate::Subsurface::subsurface_set_desync(wl_subsurface::Re
 }
 
 /*!
- * \qmlsignal void QtWaylandCompositor::WaylandSurface::dragStarted(object drag)
+ * \qmlsignal void QtWaylandCompositor::WaylandSurface::dragStarted(WaylandDrag drag)
  *
  * This signal is emitted when a \a drag has started from this surface.
  */

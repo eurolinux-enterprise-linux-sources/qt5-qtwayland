@@ -221,13 +221,13 @@ void QWaylandBufferMaterial::bind()
     switch (m_textures.size()) {
     case 3:
         if (m_textures[2])
-            m_textures[2]->bind(GL_TEXTURE2);
+            m_textures[2]->bind(2);
     case 2:
         if (m_textures[1])
-            m_textures[1]->bind(GL_TEXTURE1);
+            m_textures[1]->bind(1);
     case 1:
         if (m_textures[0])
-            m_textures[0]->bind(GL_TEXTURE0);
+            m_textures[0]->bind(0);
     }
 }
 
@@ -369,7 +369,7 @@ QWaylandQuickItem::~QWaylandQuickItem()
 }
 
 /*!
- * \qmlproperty object QtWaylandCompositor::WaylandQuickItem::compositor
+ * \qmlproperty WaylandCompositor QtWaylandCompositor::WaylandQuickItem::compositor
  *
  * This property holds the compositor for the surface rendered by this WaylandQuickItem.
  */
@@ -386,15 +386,7 @@ QWaylandCompositor *QWaylandQuickItem::compositor() const
 }
 
 /*!
- * \qmlproperty object QtWaylandCompositor::WaylandQuickItem::view
- *
- * This property holds the view rendered by this WaylandQuickItem.
- */
-
-/*!
- * \property QWaylandQuickItem::view
- *
- * This property holds the view rendered by this QWaylandQuickItem.
+ * Returns the view rendered by this QWaylandQuickItem.
  */
 QWaylandView *QWaylandQuickItem::view() const
 {
@@ -403,7 +395,7 @@ QWaylandView *QWaylandQuickItem::view() const
 }
 
 /*!
- * \qmlproperty object QtWaylandCompositor::WaylandQuickItem::surface
+ * \qmlproperty WaylandSurface QtWaylandCompositor::WaylandQuickItem::surface
  *
  * This property holds the surface rendered by this WaylandQuickItem.
  */
@@ -815,7 +807,7 @@ void QWaylandQuickItem::setBufferLocked(bool locked)
 }
 
 /*!
- * \property bool QWaylandQuickItem::allowDiscardFrontBuffer
+ * \property QWaylandQuickItem::allowDiscardFrontBuffer
  *
  * By default, the item locks the current buffer until a new buffer is available
  * and updatePaintNode() is called. Set this property to true to allow Qt to release the buffer
@@ -1072,14 +1064,14 @@ QVariant QWaylandQuickItem::inputMethodQuery(Qt::InputMethodQuery query, QVarian
 
     Returns true if the item is hidden, though the texture
     is still updated. As opposed to hiding the item by
-    setting \l{Item::visible}{visible} to \c false, setting this property to \c true
+    setting \l{Item::visible}{visible} to \c false, setting this property to \c false
     will not prevent mouse or keyboard input from reaching item.
 */
 
 /*!
     Returns true if the item is hidden, though the texture
     is still updated. As opposed to hiding the item by
-    setting \l{Item::visible}{visible} to \c false, setting this property to \c true
+    setting \l{Item::visible}{visible} to \c false, setting this property to \c false
     will not prevent mouse or keyboard input from reaching item.
 */
 bool QWaylandQuickItem::paintEnabled() const
@@ -1155,6 +1147,32 @@ void QWaylandQuickItem::updateInputMethod(Qt::InputMethodQueries queries)
     QQuickItem::updateInputMethod(queries | Qt::ImEnabled);
 }
 #endif
+
+/*!
+ * \qmlsignal void QtWaylandCompositor::WaylandQuickItem::surfaceDestroyed()
+ *
+ * This signal is emitted when the client has destroyed the \c wl_surface associated
+ * with the WaylandQuickItem. The handler for this signal is expected to either destroy the
+ * WaylandQuickItem immediately or start a close animation and then destroy the Item.
+ *
+ * If an animation is started, bufferLocked should be set to ensure the item keeps its content
+ * until the animation finishes
+ *
+ * \sa bufferLocked
+ */
+
+/*!
+ * \fn void QWaylandQuickItem::surfaceDestroyed()
+ *
+ * This signal is emitted when the client has destroyed the \c wl_surface associated
+ * with the QWaylandQuickItem. The handler for this signal is expected to either destroy the
+ * QWaylandQuickItem immediately or start a close animation and then destroy the Item.
+ *
+ * If an animation is started, bufferLocked should be set to ensure the item keeps its content
+ * until the animation finishes
+ *
+ * \sa QWaylandQuickkItem::bufferLocked
+ */
 
 QSGNode *QWaylandQuickItem::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 {

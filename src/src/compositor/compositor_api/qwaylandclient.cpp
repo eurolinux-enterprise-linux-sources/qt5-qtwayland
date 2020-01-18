@@ -167,7 +167,7 @@ QWaylandClient *QWaylandClient::fromWlClient(QWaylandCompositor *compositor, wl_
 }
 
 /*!
- * \qmlproperty object QtWaylandCompositor::WaylandClient::compositor
+ * \qmlproperty WaylandCompositor QtWaylandCompositor::WaylandClient::compositor
  *
  * This property holds the compositor of this WaylandClient.
  */
@@ -221,7 +221,7 @@ qint64 QWaylandClient::userId() const
  */
 
 /*!
- * \property int QWaylandClient::groupId
+ * \property QWaylandClient::groupId
  *
  * This property holds the group id of this QWaylandClient.
  */

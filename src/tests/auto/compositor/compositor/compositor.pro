@@ -7,7 +7,7 @@ QT += core-private gui-private waylandcompositor waylandcompositor-private
 
 QMAKE_USE += wayland-client wayland-server
 
-qtConfig(xkbcommon-evdev)
+qtConfig(xkbcommon-evdev): \
     QMAKE_USE += xkbcommon_evdev
 
 WAYLANDCLIENTSOURCES += \
@@ -20,11 +20,13 @@ SOURCES += \
     testkeyboardgrabber.cpp \
     mockclient.cpp \
     mockseat.cpp \
-    testseat.cpp
+    testseat.cpp \
+    mockpointer.cpp
 
 HEADERS += \
     testcompositor.h \
     testkeyboardgrabber.h \
     mockclient.h \
     mockseat.h \
-    testseat.h
+    testseat.h \
+    mockpointer.h
